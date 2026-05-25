@@ -12,6 +12,38 @@ const { sendHighRiskAlert } = require('../services/emailService');
 
 const asyncHandler = require('../utils/asyncHandler');
 
+// ── Ayurvedic recommendations per glucose outcome ─────────────────────
+const AYURVEDIC_RECS = {
+  normal: [
+    'Blood glucose is normal — maintain a healthy lifestyle',
+    'Reduce processed sugar, white rice, and refined carbs',
+    'Practise yoga and pranayama daily (30 minutes)',
+    'Include bitter gourd (karela) and fenugreek (methi) regularly in meals',
+    'Drink warm water with half a teaspoon of turmeric every morning',
+    'Routine screening every 6 months is recommended'
+  ],
+
+  prediabetic: [
+    'Strict dietary changes — avoid sugar, white rice, and maida products',
+    'Ayurvedic herbs: bitter gourd juice, fenugreek seeds soaked overnight, neem leaves, jamun seed powder',
+    'Yoga therapy: Surya Namaskar and Kapalbhati pranayama — 30–45 minutes daily',
+    'Walk briskly for 45 minutes every morning — essential for glucose regulation',
+    'Triphala churna: one teaspoon in warm water before bed',
+    'Manage stress — practise meditation for 20 minutes daily',
+    'Repeat blood glucose test in 1 month'
+  ],
+
+  diabetic: [
+    'Refer to CHC immediately for Type 1 / Type 2 classification and treatment plan',
+    'No added sugar; switch from rice and wheat to millets (ragi, jowar, bajra)',
+    'Ayurvedic management: Guduchi (Giloy), bitter gourd capsules, jamun seed powder daily',
+    'Yoga asanas for diabetes: Paschimottanasana, Halasana, Dhanurasana — under guidance',
+    'Strict blood glucose monitoring twice daily',
+    'Avoid all forms of stress — regular meditation is essential',
+    'Consult CHC doctor for long-term medication and monitoring plan'
+  ]
+};
+
 // POST /api/screenings
 const createScreening = asyncHandler(async (req, res) => {
   const {
@@ -42,10 +74,15 @@ const createScreening = asyncHandler(async (req, res) => {
   // Run rule engine
   const result = calculateRisk({
     age: patient.age,
+
     vitals,
+
     symptoms,
+
     riskFactors,
+
     pregnancy,
+
     ayurvedic
   });
 
@@ -63,7 +100,7 @@ const createScreening = asyncHandler(async (req, res) => {
 
     pregnancy,
 
-    ayurvedic,
+    ayurvedic: ayurvedic || {},
 
     result
   });
@@ -111,6 +148,109 @@ const createScreening = asyncHandler(async (req, res) => {
   res.status(201).json({
     screening,
     result
+  });
+});
+
+// PATCH /api/screenings/:id/phc-test
+const recordPHCTest = asyncHandler(async (req, res) => {
+  const {
+    bloodGlucose,
+    testType,
+    notes
+  } = req.body;
+
+  const screeningId = req.params.id;
+
+  if (
+    !bloodGlucose ||
+    isNaN(Number(bloodGlucose))
+  ) {
+    return res.status(400).json({
+      message:
+        'A valid blood glucose value is required'
+    });
+  }
+
+  const value = Number(bloodGlucose);
+
+  const type = testType || 'fasting';
+
+  // ADA diagnostic thresholds
+  let glucoseResult;
+
+  if (type === 'fasting') {
+    if (value < 100) {
+      glucoseResult = 'normal';
+    } else if (value < 126) {
+      glucoseResult = 'prediabetic';
+    } else {
+      glucoseResult = 'diabetic';
+    }
+  } else {
+    // random or postprandial
+    if (value < 140) {
+      glucoseResult = 'normal';
+    } else if (value < 200) {
+      glucoseResult = 'prediabetic';
+    } else {
+      glucoseResult = 'diabetic';
+    }
+  }
+
+  const outcome =
+    glucoseResult === 'normal'
+      ? 'manage_at_phc'
+      : 'refer_to_chc';
+
+  const ayurvedicRecommendations =
+    AYURVEDIC_RECS[glucoseResult];
+
+  const screening =
+    await Screening.findByIdAndUpdate(
+      screeningId,
+      {
+        $set: {
+          phcTest: {
+            bloodGlucose: value,
+
+            testType: type,
+
+            glucoseResult,
+
+            testedBy: req.user.id,
+
+            testedAt: new Date(),
+
+            notes: notes || '',
+
+            outcome,
+
+            ayurvedicRecommendations
+          }
+        }
+      },
+      {
+        new: true
+      }
+    ).populate(
+      'patientId',
+      'name age gender village phone'
+    );
+
+  if (!screening) {
+    return res.status(404).json({
+      message: 'Screening not found'
+    });
+  }
+
+  res.json({
+    screening,
+
+    glucoseResult,
+
+    outcome,
+
+    ayurvedicRecommendations
   });
 });
 
@@ -183,10 +323,15 @@ const getStats = asyncHandler(async (req, res) => {
 
   res.json({
     todayCount,
+
     highRisk,
+
     mediumRisk,
+
     lowRisk,
+
     pendingAlerts,
+
     pendingFollowups
   });
 });
@@ -320,8 +465,14 @@ const getWeeklyTrend = asyncHandler(async (req, res) => {
 
 module.exports = {
   createScreening,
+
+  recordPHCTest,
+
   getScreenings,
+
   getStats,
+
   getVillageSummary,
+
   getWeeklyTrend
 };

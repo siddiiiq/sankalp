@@ -2,11 +2,49 @@ import { useState } from 'react';
 
 const INITIAL = {
   patientId: null,
+
   patient: {},
-  vitals: { systolic: '', diastolic: '', bloodSugar: '', weight: '', height: '', waist: '' },
-  symptoms: { urination: false, thirst: false, vision: false, headache: false, fatigue: false, numbness: false },
-  riskFactors: { familyDiabetes: false, familyBP: false, smoking: 'no', alcohol: false, exercise: 'moderate', stress: 'low' },
-  pregnancy: { isPregnant: false, gestationalHistory: false }
+
+  vitals: {
+    systolic: '',
+    diastolic: '',
+    weight: '',
+    height: '',
+    waist: ''
+  },
+
+  symptoms: {
+    urination: false,
+    thirst: false,
+    vision: false,
+    headache: false,
+    fatigue: false,
+    numbness: false
+  },
+
+  riskFactors: {
+    familyDiabetes: false,
+    familyBP: false,
+    smoking: 'no',
+    alcohol: false,
+    exercise: 'moderate',
+    stress: 'low'
+  },
+
+  ayurvedic: {
+    bodyHeat: false,
+    digestiveIssues: false,
+    fatigue: false,
+    sleepDisturbances: false,
+    frequentThirst: false,
+    skinDryness: false,
+    urinaryAbnormalities: false
+  },
+
+  pregnancy: {
+    isPregnant: false,
+    gestationalHistory: false
+  }
 };
 
 export function useScreening() {

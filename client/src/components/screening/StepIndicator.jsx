@@ -1,4 +1,11 @@
-const steps = ['Patient Info', 'Vitals', 'Symptoms', 'Risk Factors', 'Pregnancy'];
+const steps = [
+  'Patient Info',
+  'Vitals',
+  'Symptoms',
+  'Risk Factors',
+  'Ayurveda',
+  'Pregnancy'
+];
 
 export default function StepIndicator({ current }) {
   return (

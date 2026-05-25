@@ -23,78 +23,157 @@ export default function DoctorDashboard() {
 
   useEffect(() => {
     Promise.all([
-      getStats(), getAlerts({ status: 'pending' }), getWeeklyTrend(), getVillageSummary()
-    ]).then(([s, a, w, v]) => {
-      setStats(s.data); setAlerts(a.data.slice(0, 5)); setWeekly(w.data); setVillages(v.data);
-    }).catch(console.error).finally(() => setLoading(false));
+      getStats(), 
+      getAlerts({ status: 'pending' }), 
+      getWeeklyTrend(), 
+      getVillageSummary()
+    ])
+      .then(([s, a, w, v]) => {
+        setStats(s.data); 
+        setAlerts(a.data.slice(0, 5)); 
+        setWeekly(w.data); 
+        setVillages(v.data);
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans text-slate-800">
       <Navbar />
-      <div className="flex">
+      
+      <div className="flex flex-1 overflow-hidden">
         <Sidebar />
-        <main className="flex-1 p-6 space-y-6 max-w-5xl">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">Welcome, {user?.name}</h1>
-            <p className="text-gray-500 text-sm">PHC Dashboard — {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+        
+        <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto w-full max-w-7xl mx-auto space-y-6 md:space-y-8">
+          
+          {/* Header Section */}
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 animate-in fade-in duration-300">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight mb-1">
+                Welcome, Dr. {user?.name?.split(' ')[0] || user?.name}
+              </h1>
+              <p className="text-sm font-medium text-slate-500 flex items-center gap-2">
+                <span>🏥 PHC Dashboard</span>
+                <span className="w-1 h-1 rounded-full bg-slate-300"></span>
+                <span>{new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
+              </p>
+            </div>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard label="Screened Today" value={stats?.todayCount ?? '—'} icon="📋" color="blue" />
-            <StatCard label="High Risk Alerts" value={stats?.pendingAlerts ?? '—'} icon="🚨" color="red" onClick={() => navigate('/doctor/alerts')} />
-            <StatCard label="Follow-ups Due" value={stats?.pendingFollowups ?? '—'} icon="⏰" color="yellow" />
-            <StatCard label="Total High Risk" value={stats?.highRisk ?? '—'} icon="⚠️" color="red" />
-          </div>
-
-          {/* Alert Queue */}
-          {alerts.length > 0 && (
-            <div className="card">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="font-bold text-red-700 flex items-center gap-2">
-                  🚨 High Risk Alerts
-                  <span className="bg-red-600 text-white text-xs rounded-full px-2 py-0.5">{alerts.length}</span>
-                </h2>
-                <button onClick={() => navigate('/doctor/alerts')} className="text-sm text-blue-600 hover:underline">View all →</button>
+          {loading ? (
+            // ================= SKELETON LOADER =================
+            <div className="space-y-8">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                {[1, 2, 3, 4].map(i => <div key={i} className="h-28 bg-white border border-slate-100 rounded-[1.5rem] animate-pulse"></div>)}
               </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-gray-500 text-xs border-b">
-                      <th className="text-left py-2 px-3">Patient</th>
-                      <th className="text-left py-2 px-3">Village</th>
-                      <th className="text-left py-2 px-3">Age</th>
-                      <th className="text-left py-2 px-3">BP</th>
-                      <th className="text-left py-2 px-3">Sugar</th>
-                      <th className="text-left py-2 px-3">Time</th>
-                      <th className="text-left py-2 px-3"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {alerts.map(a => (
-                      <tr key={a._id} className="border-b border-gray-50 hover:bg-red-50 cursor-pointer" onClick={() => navigate(`/doctor/patients/${a.patientId?._id}`)}>
-                        <td className="py-2 px-3 font-medium">{a.patientId?.name}</td>
-                        <td className="py-2 px-3 text-gray-500">{a.patientId?.village}</td>
-                        <td className="py-2 px-3">{a.patientId?.age}</td>
-                        <td className="py-2 px-3 text-red-600 font-bold">{a.screeningId?.vitals?.systolic}/{a.screeningId?.vitals?.diastolic}</td>
-                        <td className="py-2 px-3 text-red-600 font-bold">{a.screeningId?.vitals?.bloodSugar}</td>
-                        <td className="py-2 px-3 text-gray-400 text-xs">{formatDateTime(a.createdAt)}</td>
-                        <td className="py-2 px-3"><RiskBadge level="HIGH" /></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="h-64 bg-white border border-slate-100 rounded-[1.5rem] animate-pulse"></div>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+                {[1, 2, 3].map(i => <div key={i} className="h-72 bg-white border border-slate-100 rounded-[1.5rem] animate-pulse"></div>)}
               </div>
             </div>
-          )}
+          ) : (
+            // ================= LOADED CONTENT =================
+            <div className="space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
+                <StatCard label="Screened Today" value={stats?.todayCount ?? '—'} icon="📋" color="blue" />
+                <StatCard 
+                  label="Critical Alerts" 
+                  value={stats?.pendingAlerts ?? '—'} 
+                  icon="🚨" 
+                  color="red" 
+                  onClick={() => navigate('/doctor/alerts')} 
+                  className="cursor-pointer hover:shadow-md transition-shadow ring-2 ring-transparent hover:ring-rose-200"
+                />
+                <StatCard label="Follow-ups Due" value={stats?.pendingFollowups ?? '—'} icon="⏰" color="yellow" />
+                <StatCard label="Total High Risk" value={stats?.highRisk ?? '—'} icon="⚠️" color="orange" />
+              </div>
 
-          {/* Charts */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <RiskPieChart data={stats} />
-            <WeeklyLineChart data={weekly} />
-            <VillageBarChart data={villages} />
-          </div>
+              {/* Alert Queue (Top 5) */}
+              {alerts.length > 0 && (
+                <div className="bg-white rounded-[1.5rem] shadow-sm border border-slate-100 overflow-hidden">
+                  <div className="flex items-center justify-between p-5 md:p-6 border-b border-slate-100">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center text-sm shadow-sm border border-rose-100">🚨</div>
+                      <h2 className="font-extrabold text-slate-800 text-lg">
+                        Immediate Attention Required
+                      </h2>
+                      <span className="bg-rose-500 text-white text-xs font-bold rounded-full px-2.5 py-0.5 shadow-sm">
+                        {alerts.length} Pending
+                      </span>
+                    </div>
+                    <button 
+                      onClick={() => navigate('/doctor/alerts')} 
+                      className="text-sm font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl transition-colors"
+                    >
+                      View Queue →
+                    </button>
+                  </div>
+                  
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm text-left whitespace-nowrap">
+                      <thead className="bg-slate-50/80 border-b border-slate-100 text-slate-500 uppercase text-[11px] font-extrabold tracking-wider">
+                        <tr>
+                          <th className="py-3.5 px-6">Patient</th>
+                          <th className="py-3.5 px-6">Village</th>
+                          <th className="py-3.5 px-6">Age</th>
+                          <th className="py-3.5 px-6">BP (mmHg)</th>
+                          <th className="py-3.5 px-6">Sugar</th>
+                          <th className="py-3.5 px-6">Reported</th>
+                          <th className="py-3.5 px-6">Risk</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-50">
+                        {alerts.map(a => (
+                          <tr 
+                            key={a._id} 
+                            className="hover:bg-rose-50/40 cursor-pointer transition-colors duration-150 group" 
+                            onClick={() => navigate(`/doctor/patients/${a.patientId?._id}`)}
+                          >
+                            <td className="py-3.5 px-6 font-bold text-slate-800">{a.patientId?.name}</td>
+                            <td className="py-3.5 px-6 text-slate-500 font-medium">{a.patientId?.village}</td>
+                            <td className="py-3.5 px-6 text-slate-600 font-medium">{a.patientId?.age} yrs</td>
+                            <td className="py-3.5 px-6">
+                              <span className="text-rose-700 font-bold bg-rose-100/60 px-2.5 py-1 rounded-lg border border-rose-100">
+                                {a.screeningId?.vitals?.systolic}/{a.screeningId?.vitals?.diastolic}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-6">
+                              <span className="text-rose-700 font-bold bg-rose-100/60 px-2.5 py-1 rounded-lg border border-rose-100">
+                                {a.screeningId?.vitals?.bloodSugar}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-6 text-slate-400 text-xs font-semibold">
+                              {formatDateTime(a.createdAt)}
+                            </td>
+                            <td className="py-3.5 px-6">
+                              <RiskBadge level="HIGH" />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* Charts Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 md:gap-6">
+                <div className="bg-white rounded-[1.5rem] shadow-sm border border-slate-100 p-5 md:p-6">
+                  <RiskPieChart data={stats} />
+                </div>
+                <div className="bg-white rounded-[1.5rem] shadow-sm border border-slate-100 p-5 md:p-6 lg:col-span-1">
+                  <WeeklyLineChart data={weekly} />
+                </div>
+                <div className="bg-white rounded-[1.5rem] shadow-sm border border-slate-100 p-5 md:p-6 lg:col-span-1">
+                  <VillageBarChart data={villages} />
+                </div>
+              </div>
+
+            </div>
+          )}
         </main>
       </div>
     </div>

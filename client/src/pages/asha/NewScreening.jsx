@@ -86,23 +86,17 @@ export default function NewScreening() {
 
       vitals: {
         ...data.vitals,
-
         bmi,
-
         systolic: Number(data.vitals.systolic),
         diastolic: Number(data.vitals.diastolic),
-
         weight: Number(data.vitals.weight),
         height: Number(data.vitals.height),
         waist: Number(data.vitals.waist),
       },
 
       symptoms: data.symptoms,
-
       riskFactors: data.riskFactors,
-
       ayurvedic: data.ayurvedic,
-
       pregnancy: data.pregnancy,
     };
 
@@ -120,7 +114,6 @@ export default function NewScreening() {
             patient: createdPatient,
           },
         });
-
         return;
       }
 
@@ -158,7 +151,6 @@ export default function NewScreening() {
             createdPatient={createdPatient}
           />
         );
-
       case 2:
         return (
           <Step2Vitals
@@ -166,7 +158,6 @@ export default function NewScreening() {
             onChange={(v) => update('vitals', v)}
           />
         );
-
       case 3:
         return (
           <Step3Symptoms
@@ -174,7 +165,6 @@ export default function NewScreening() {
             onChange={(v) => update('symptoms', v)}
           />
         );
-
       case 4:
         return (
           <Step4RiskFactors
@@ -182,7 +172,6 @@ export default function NewScreening() {
             onChange={(v) => update('riskFactors', v)}
           />
         );
-
       case 5:
         return (
           <Step5Ayurveda
@@ -190,7 +179,6 @@ export default function NewScreening() {
             onChange={(v) => update('ayurvedic', v)}
           />
         );
-
       case 6:
         return (
           <Step5Pregnancy
@@ -199,7 +187,6 @@ export default function NewScreening() {
             gender={data.patient.gender}
           />
         );
-
       default:
         return null;
     }
@@ -209,35 +196,41 @@ export default function NewScreening() {
   // UI
   // =========================
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-[#F8FAFC] pb-24 font-sans text-slate-800">
       <OfflineBanner />
       <Navbar />
 
-      <div className="max-w-lg mx-auto p-4">
+      <main className="max-w-2xl mx-auto p-4 md:p-6 mt-2">
+        
         {/* HEADER */}
-        <div className="flex items-center gap-3 mb-4">
-          <button
-            onClick={() => navigate('/asha')}
-            className="text-2xl text-gray-500 hover:text-gray-700"
+        <div className="flex items-center gap-4 mb-6">
+          <button 
+            onClick={() => navigate('/asha')} 
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-blue-600 active:scale-95 transition-all shadow-sm shrink-0"
           >
-            ←
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
           </button>
-
-          <h1 className="text-xl font-bold text-gray-800">
+          <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">
             New Screening
           </h1>
         </div>
 
         {/* STEP INDICATOR */}
-        <StepIndicator current={step} />
+        <div className="mb-6">
+          <StepIndicator current={step} />
+        </div>
 
-        {/* STEP CONTENT */}
-        <div className="card mb-4">
+        {/* STEP CONTENT CONTAINER */}
+        <div className="bg-white rounded-[1.5rem] md:rounded-[2rem] p-5 md:p-6 shadow-sm border border-slate-100 mb-6 transition-all duration-300 relative">
           {renderStep()}
 
+          {/* Enhanced Error Toast */}
           {error && (
-            <div className="mt-4 rounded-xl bg-red-50 border border-red-200 p-3">
-              <p className="text-sm text-red-600">{error}</p>
+            <div className="mt-6 flex items-start gap-3 rounded-xl bg-red-50 border border-red-100 p-4">
+              <span className="text-red-500 text-lg leading-none mt-0.5">⚠️</span>
+              <p className="text-sm font-semibold text-red-700">{error}</p>
             </div>
           )}
         </div>
@@ -247,7 +240,7 @@ export default function NewScreening() {
           {step > 1 && (
             <button
               onClick={prevStep}
-              className="btn-secondary flex-1"
+              className="flex-1 py-3.5 px-4 bg-white border-2 border-slate-200 text-slate-600 font-bold rounded-2xl hover:bg-slate-50 hover:border-slate-300 hover:text-slate-800 active:scale-[0.98] transition-all"
             >
               ← Back
             </button>
@@ -256,9 +249,9 @@ export default function NewScreening() {
           {step > 1 && step < 6 && (
             <button
               onClick={nextStep}
-              className="btn-primary flex-1"
+              className="flex-[2] py-3.5 px-4 bg-blue-600 text-white font-bold rounded-2xl shadow-sm hover:bg-blue-700 hover:shadow-md active:scale-[0.98] transition-all"
             >
-              Next →
+              Next Step →
             </button>
           )}
 
@@ -266,15 +259,27 @@ export default function NewScreening() {
             <button
               onClick={handleSubmit}
               disabled={submitting}
-              className="btn-primary flex-1 py-3"
+              className={`flex-[2] py-3.5 px-4 font-bold rounded-2xl shadow-sm transition-all ${
+                submitting 
+                  ? 'bg-slate-300 text-slate-500 cursor-not-allowed' 
+                  : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-md hover:from-blue-700 hover:to-indigo-700 active:scale-[0.98]'
+              }`}
             >
-              {submitting
-                ? 'Calculating...'
-                : '✅ Submit & Get Risk Score'}
+              {submitting ? (
+                <div className="flex items-center justify-center gap-2">
+                  <svg className="animate-spin h-5 w-5 text-white/70" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>Processing...</span>
+                </div>
+              ) : (
+                '✅ Submit & Get Score'
+              )}
             </button>
           )}
         </div>
-      </div>
+      </main>
 
       <BottomNav />
     </div>

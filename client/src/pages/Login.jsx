@@ -27,8 +27,8 @@ export default function Login() {
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="text-5xl mb-3">🌿</div>
-          <h1 className="text-3xl font-bold text-green-700">NirAmaya</h1>
+          <div className="text-5xl mb-3"></div>
+          <h1 className="text-3xl font-bold text-green-700">ASDIQA</h1>
           <p className="text-gray-500 text-sm mt-1">Rural Health Screening System</p>
           <div className="mt-3 flex justify-center">
             <LanguageToggle />
@@ -38,9 +38,9 @@ export default function Login() {
         {/* Role tabs */}
         <div className="flex rounded-xl bg-gray-100 p-1 mb-6">
           {[
-            { key: 'asha', label: '👩‍⚕️ ASHA Worker' },
-            { key: 'doctor', label: '🩺 PHC Doctor' },
-            { key: 'hospital', label: '🏥 Hospital' }
+            { key: 'asha', label: ' ASHA Worker' },
+            { key: 'doctor', label: ' PHC Doctor' },
+            { key: 'hospital', label: ' Hospital' }
           ].map(r => (
             <button
               key={r.key}

@@ -10,12 +10,15 @@ const createReferral = asyncHandler(async (req, res) => {
   const { patientId, screeningId, referredToName, referredToEmail, reason } = req.body;
 
   const referral = await Referral.create({
-    patientId, screeningId,
+    patientId,
+    screeningId,
     referredBy: req.user.id,
-    referredToName, referredToEmail, reason
+    referredToName,
+    referredToEmail,
+    reason,
   });
 
-  // Update alert status
+  // Update alert status to actioned
   await Alert.updateOne({ screeningId }, { status: 'actioned' });
 
   // Send email to hospital
@@ -23,7 +26,7 @@ const createReferral = asyncHandler(async (req, res) => {
     const [patient, screening, doctor] = await Promise.all([
       Patient.findById(patientId),
       Screening.findById(screeningId),
-      User.findById(req.user.id).select('name')
+      User.findById(req.user.id).select('name'),
     ]);
     await sendReferralNotice(patient, screening, doctor, referral);
     await Referral.findByIdAndUpdate(referral._id, { emailSentAt: new Date() });
@@ -37,11 +40,15 @@ const createReferral = asyncHandler(async (req, res) => {
 const getReferrals = asyncHandler(async (req, res) => {
   const filter = {};
   if (req.query.status) filter.status = req.query.status;
+  if (req.query.patientId) filter.patientId = req.query.patientId;
+
   const referrals = await Referral.find(filter)
     .sort({ createdAt: -1 })
     .populate('patientId', 'name age gender village phone')
-    .populate('screeningId', 'vitals result')
+    // FIX: include phcTest in populate so hospital can see blood glucose results
+    .populate('screeningId', 'vitals result phcTest')
     .populate('referredBy', 'name');
+
   res.json(referrals);
 });
 

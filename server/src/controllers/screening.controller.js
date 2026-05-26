@@ -13,34 +13,51 @@ const { sendHighRiskAlert } = require('../services/emailService');
 const asyncHandler = require('../utils/asyncHandler');
 
 // ── Ayurvedic recommendations per glucose outcome ─────────────────────
+/**
+ * PHC blood glucose Ayurvedic recommendations
+ *
+ * Sources:
+ * - NHP India: https://www.nhp.gov.in/Madhumeha-(Diabetes-mellitus)_mtl
+ * - CCRAS/AYUSH NPCDCS Integration Guidelines (2018)
+ * - NCBI NBK33787: Ayurvedic Interventions for Diabetes Mellitus
+ * - PMC6145966: Therapeutic Role of Yoga in Type 2 Diabetes
+ * - Charaka Samhita Nidanasthana 4/47 (Prameha Purvarupa)
+ */
 const AYURVEDIC_RECS = {
   normal: [
-    'Blood glucose is normal — maintain a healthy lifestyle',
-    'Reduce processed sugar, white rice, and refined carbs',
-    'Practise yoga and pranayama daily (30 minutes)',
-    'Include bitter gourd (karela) and fenugreek (methi) regularly in meals',
-    'Drink warm water with half a teaspoon of turmeric every morning',
-    'Routine screening every 6 months is recommended'
+    'Blood glucose is within normal range — maintain your current lifestyle',
+    'Preventive diet per CCRAS: include amla (Indian gooseberry), garlic, and guava regularly — these are listed in CCRAS preventive food recommendations',
+    'Avoid Nidana (causative factors) of Prameha: sedentary lifestyle (Asya Sukha), excessive sweet and oily foods, and daytime sleeping (Divasvapna) — Charaka Samhita Nidanasthana 4',
+    'Yoga: Paschimottanasana, Mandukasana, and Vajrasana — shown to compress the pancreatic region and support insulin regulation (PMC6145966); practise 30 minutes daily',
+    'Pranayama: Anuloma Viloma (alternate nostril breathing) 10–15 minutes daily — improves autonomic balance and metabolic function',
+    'Routine screening every 6 months recommended by NHP'
   ],
 
   prediabetic: [
-    'Strict dietary changes — avoid sugar, white rice, and maida products',
-    'Ayurvedic herbs: bitter gourd juice, fenugreek seeds soaked overnight, neem leaves, jamun seed powder',
-    'Yoga therapy: Surya Namaskar and Kapalbhati pranayama — 30–45 minutes daily',
-    'Walk briskly for 45 minutes every morning — essential for glucose regulation',
-    'Triphala churna: one teaspoon in warm water before bed',
-    'Manage stress — practise meditation for 20 minutes daily',
-    'Repeat blood glucose test in 1 month'
+    'Blood glucose indicates pre-diabetes (Purvarupa of Madhumeha) — immediate lifestyle intervention required',
+    'Nidana Parivarjana (remove causes): strictly avoid all sweets, white rice, maida, processed foods, and cold beverages — these aggravate Kapha and worsen Prameha',
+    'CCRAS-recommended herbs with clinical evidence (NCBI NBK33787): fenugreek seeds (Methi / Trigonella foenum-graecum) — soak 1 tablespoon overnight, drink the water each morning; shown to significantly improve glycaemic status',
+    'Karela (bitter gourd / Momordica charantia) — include in meals at least 3 times per week; evidence of glucose-lowering effect in multiple studies',
+    'Jamun (Eugenia jambolana) — fruit and seeds; seed powder (1 teaspoon with water) has traditional and some clinical support for blood sugar regulation',
+    'Diet: replace white rice with millets — ragi (finger millet), jowar (sorghum), bajra (pearl millet); these are Trinadhanya, specifically recommended for Prameha in Ayurvedic texts',
+    'Vyayama (exercise) — brisk walking 45–60 minutes daily; Charaka Samhita identifies physical inactivity as the primary cause of Prameha',
+    'Yoga asanas per PMC6145966: Paschimottanasana (seated forward bend), Ardhamatsyendrasana (seated spinal twist), Mandukasana (frog pose) — these stimulate pancreatic function',
+    'Pranayama: Kapalbhati (bellows breathing) and Anuloma Viloma — 15–20 minutes daily; research shows improvement in fasting blood sugar',
+    'Repeat blood glucose test in 1 month; refer to PHC doctor if no improvement'
   ],
 
   diabetic: [
-    'Refer to CHC immediately for Type 1 / Type 2 classification and treatment plan',
-    'No added sugar; switch from rice and wheat to millets (ragi, jowar, bajra)',
-    'Ayurvedic management: Guduchi (Giloy), bitter gourd capsules, jamun seed powder daily',
-    'Yoga asanas for diabetes: Paschimottanasana, Halasana, Dhanurasana — under guidance',
-    'Strict blood glucose monitoring twice daily',
-    'Avoid all forms of stress — regular meditation is essential',
-    'Consult CHC doctor for long-term medication and monitoring plan'
+    'Blood glucose confirms diabetes (Madhumeha) — refer to CHC immediately for Type 1 / Type 2 classification and treatment plan',
+    'Allopathic medication is essential — Ayurvedic herbs are supportive only and must not replace prescribed treatment',
+    'Nidana Parivarjana: completely avoid all sugar, white rice, maida, processed foods, alcohol, and tobacco',
+    'Diet: switch entirely to millets (ragi, jowar, bajra) — classified as Trinadhanya in Ayurveda and recommended by CCRAS for Madhumeha management',
+    'CCRAS/AYUSH-approved herbs with strongest clinical evidence (NCBI NBK33787): Gymnema sylvestre (Gurmar / Meshashringi) — shown to increase serum insulin levels; Coccinia indica (Tindora / Bimbi) — RCT evidence for glucose-lowering; fenugreek (Methi) — consistent evidence across studies',
+    'Vijayasar (Pterocarpus marsupium) — ICMR open trial showed significant reduction in FBS, PPBS, and HbA1c; CCRAS recommends 2–4g bark powder daily under physician guidance',
+    'Strict blood glucose monitoring — twice daily (fasting and post-meal)',
+    'Yoga per PMC6145966: Paschimottanasana, Halasana, Dhanurasana, Ardhamatsyendrasana — under guidance of a qualified yoga therapist; do NOT attempt if blood sugar is above 300 mg/dL without medical clearance',
+    'Pranayama: Kapalbhati, Anuloma Viloma, Bhramari — 20–30 minutes daily under guidance',
+    'Meditation 20 minutes daily — chronic stress raises cortisol, which worsens insulin resistance',
+    'Consult CHC doctor for long-term medication, HbA1c monitoring, and complication screening'
   ]
 };
 

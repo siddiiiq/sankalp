@@ -3,48 +3,54 @@ import { useTranslation } from 'react-i18next';
 export default function Step5Ayurveda({ data, onChange }) {
   const { t } = useTranslation();
 
+  /**
+   * Ayurvedic symptom labels sourced from:
+   * Charaka Samhita Nidanasthana 4/47 and
+   * Ashtanga Hridaya Nidanasthana 10/7-8
+   * (Purvarupa — premonitory symptoms of Prameha/Madhumeha)
+   */
   const ayurvedicSymptoms = [
     {
-      key: 'bodyHeat',
-      label: t('body_heat', 'Excessive body heat / burning sensation'),
-      icon: '🔥',
-      sanskrit: 'Daha'
-    },
-    {
-      key: 'digestiveIssues',
-      label: t('digestive_issues', 'Digestive irregularities / bloating'),
-      icon: '🫁',
-      sanskrit: 'Agnimandya'
-    },
-    {
-      key: 'fatigue',
-      label: t('fatigue_ayurveda', 'Fatigue and lethargy'),
-      icon: '😴',
-      sanskrit: 'Klama'
-    },
-    {
-      key: 'sleepDisturbances',
-      label: t('sleep_disturbances', 'Sleep disturbances / insomnia'),
-      icon: '🌙',
-      sanskrit: 'Nidranasha'
+      key: 'urinaryAbnormalities',
+      label: 'Excessive, turbid, or frequent urination',
+      icon: '🚽',
+      sanskrit: 'Prabhuta Mutrata / Prameha (Charaka Nidana 4/6)'
     },
     {
       key: 'frequentThirst',
-      label: t('frequent_thirst', 'Frequent or excessive thirst'),
+      label: 'Persistent, unquenchable thirst and dry mouth',
       icon: '💧',
-      sanskrit: 'Trishna'
+      sanskrit: 'Trishna / Mukha-Talu-Kantha Shosha (Charaka Nidana 4/47)'
+    },
+    {
+      key: 'bodyHeat',
+      label: 'Burning sensation in palms and soles of feet',
+      icon: '🔥',
+      sanskrit: 'Kara-Pada Daha (Charaka Nidana 4/47) — Purvarupa of Prameha'
     },
     {
       key: 'skinDryness',
-      label: t('skin_dryness', 'Skin dryness / itching'),
+      label: 'Stickiness or excessive oiliness of skin',
       icon: '🖐️',
-      sanskrit: 'Twak Raukshya'
+      sanskrit: 'Anga Upadeha / Snigdhata (Charaka Nidana 4/47)'
     },
     {
-      key: 'urinaryAbnormalities',
-      label: t('urinary_abnormalities', 'Urinary abnormalities / cloudiness'),
-      icon: '🚽',
-      sanskrit: 'Prameha'
+      key: 'fatigue',
+      label: 'Unexplained fatigue and heaviness in the body',
+      icon: '😴',
+      sanskrit: 'Daurbalya / Anga Shaithilya (Charaka Nidana 4/47)'
+    },
+    {
+      key: 'digestiveIssues',
+      label: 'Digestive weakness, bloating, or irregular appetite',
+      icon: '🫁',
+      sanskrit: 'Agnimandya (impaired digestive fire) — key Kapha indicator'
+    },
+    {
+      key: 'sleepDisturbances',
+      label: 'Excessive desire to lie down, drowsiness, or sleep disturbance',
+      icon: '🌙',
+      sanskrit: 'Alasya / Tandra (Charaka Nidana 4) — sedentary habit, primary Nidana of Prameha'
     }
   ];
 
@@ -63,11 +69,8 @@ export default function Step5Ayurveda({ data, onChange }) {
             {t('ayurvedic_assessment', 'Ayurvedic Assessment')}
           </h2>
 
-          <p className="text-xs font-medium text-slate-500 mt-0.5">
-            {t(
-              'ayurveda_subtitle',
-              'Traditional indicators (Prameha Purvarupa)'
-            )}
+          <p className="text-sm text-gray-500">
+            Classical premonitory symptoms (Purvarupa) of Prameha — sourced from Charaka Samhita Nidanasthana 4/47 and Ashtanga Hridaya Nidanasthana 10/7–8. These signs appear before blood tests show abnormality.
           </p>
         </div>
       </div>

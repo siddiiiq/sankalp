@@ -141,7 +141,7 @@ export default function Step4RiskFactors({ data, onChange }) {
         <div className="bg-white border border-slate-200 rounded-[1.5rem] p-4 sm:p-5 shadow-sm space-y-5">
 
           <h3 className="text-sm font-extrabold text-slate-400 uppercase tracking-wider ml-1 flex items-center gap-2">
-            <span>🩸</span>
+            <span></span>
             {t('family_history', 'Family & History')}
           </h3>
 
@@ -180,7 +180,7 @@ export default function Step4RiskFactors({ data, onChange }) {
         <div className="bg-white border border-slate-200 rounded-[1.5rem] p-4 sm:p-5 shadow-sm space-y-6">
 
           <h3 className="text-sm font-extrabold text-slate-400 uppercase tracking-wider ml-1 flex items-center gap-2">
-            <span>🏃🏽‍♀️</span>
+            <span></span>
             {t('lifestyle_habits', 'Lifestyle & Habits')}
           </h3>
 

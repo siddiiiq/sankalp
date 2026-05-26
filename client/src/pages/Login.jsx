@@ -48,17 +48,17 @@ export default function Login() {
     {
       key: 'asha',
       label: t('asha_worker', 'ASHA'),
-      icon: '🩺'
+      icon: ''
     },
     {
       key: 'doctor',
       label: t('doctor', 'Doctor'),
-      icon: '👨🏽‍⚕️'
+      icon: ''
     },
     {
       key: 'hospital',
       label: t('hospital', 'Hospital'),
-      icon: '🏥'
+      icon: ''
     }
   ];
 

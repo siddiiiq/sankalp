@@ -1,56 +1,59 @@
 import { useTranslation } from 'react-i18next';
+import {
+  Droplets,
+  Flame,
+  Hand,
+  BatteryLow,
+  Moon,
+  Stethoscope,
+  Activity
+} from 'lucide-react';
 
 export default function Step5Ayurveda({ data, onChange }) {
   const { t } = useTranslation();
 
-  /**
-   * Ayurvedic symptom labels sourced from:
-   * Charaka Samhita Nidanasthana 4/47 and
-   * Ashtanga Hridaya Nidanasthana 10/7-8
-   * (Purvarupa — premonitory symptoms of Prameha/Madhumeha)
-   */
   const ayurvedicSymptoms = [
     {
       key: 'urinaryAbnormalities',
       label: 'Excessive, turbid, or frequent urination',
-      icon: '🚽',
+      icon: Droplets,
       sanskrit: 'Prabhuta Mutrata / Prameha (Charaka Nidana 4/6)'
     },
     {
       key: 'frequentThirst',
-      label: 'Persistent, unquenchable thirst and dry mouth',
-      icon: '💧',
+      label: 'Persistent thirst and dry mouth',
+      icon: Droplets,
       sanskrit: 'Trishna / Mukha-Talu-Kantha Shosha (Charaka Nidana 4/47)'
     },
     {
       key: 'bodyHeat',
-      label: 'Burning sensation in palms and soles of feet',
-      icon: '🔥',
-      sanskrit: 'Kara-Pada Daha (Charaka Nidana 4/47) — Purvarupa of Prameha'
+      label: 'Burning sensation in palms and soles',
+      icon: Flame,
+      sanskrit: 'Kara-Pada Daha (Charaka Nidana 4/47)'
     },
     {
       key: 'skinDryness',
-      label: 'Stickiness or excessive oiliness of skin',
-      icon: '🖐️',
+      label: 'Skin stickiness or abnormal oiliness',
+      icon: Hand,
       sanskrit: 'Anga Upadeha / Snigdhata (Charaka Nidana 4/47)'
     },
     {
       key: 'fatigue',
-      label: 'Unexplained fatigue and heaviness in the body',
-      icon: '😴',
+      label: 'Unexplained fatigue and heaviness',
+      icon: BatteryLow,
       sanskrit: 'Daurbalya / Anga Shaithilya (Charaka Nidana 4/47)'
     },
     {
       key: 'digestiveIssues',
-      label: 'Digestive weakness, bloating, or irregular appetite',
-      icon: '🫁',
-      sanskrit: 'Agnimandya (impaired digestive fire) — key Kapha indicator'
+      label: 'Digestive weakness or irregular appetite',
+      icon: Stethoscope,
+      sanskrit: 'Agnimandya — impaired digestive fire'
     },
     {
       key: 'sleepDisturbances',
-      label: 'Excessive desire to lie down, drowsiness, or sleep disturbance',
-      icon: '🌙',
-      sanskrit: 'Alasya / Tandra (Charaka Nidana 4) — sedentary habit, primary Nidana of Prameha'
+      label: 'Drowsiness or excessive sleep tendency',
+      icon: Moon,
+      sanskrit: 'Alasya / Tandra (Charaka Nidana 4)'
     }
   ];
 
@@ -58,131 +61,111 @@ export default function Step5Ayurveda({ data, onChange }) {
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
 
       {/* Header */}
-      <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+      <div className="flex items-start gap-4 border-b border-slate-100 pb-5">
 
-        <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shadow-sm border border-emerald-100">
-          🌿
+        <div className="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100">
+          <Activity className="w-5 h-5" />
         </div>
 
         <div>
-          <h2 className="text-xl font-extrabold text-slate-800 tracking-tight">
+          <h2 className="text-xl font-extrabold text-slate-800">
             {t('ayurvedic_assessment', 'Ayurvedic Assessment')}
           </h2>
 
-          <p className="text-sm text-gray-500">
-            Classical premonitory symptoms (Purvarupa) of Prameha — sourced from Charaka Samhita Nidanasthana 4/47 and Ashtanga Hridaya Nidanasthana 10/7–8. These signs appear before blood tests show abnormality.
+          <p className="text-sm text-slate-500 leading-relaxed mt-1">
+            Classical premonitory symptoms (Purvarupa) of Prameha based on
+            Charaka Samhita Nidanasthana and Ashtanga Hridaya. These help
+            detect early metabolic risk before lab abnormalities appear.
           </p>
         </div>
       </div>
 
       {/* Info Banner */}
-      <div className="bg-emerald-50/70 border border-emerald-200/60 rounded-[1.25rem] p-4 flex items-start gap-3 shadow-sm">
+      <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex gap-3">
 
-        <div className="text-emerald-500 text-lg mt-0.5">
-          📌
-        </div>
+        <Activity className="w-5 h-5 text-emerald-600 mt-0.5" />
 
-        <p className="text-sm text-emerald-800 font-medium leading-relaxed">
+        <p className="text-sm text-emerald-800 font-medium">
           {t(
             'ayurveda_info',
-            'These Ayurvedic indicators help identify early-stage metabolic risk before clinical symptoms appear.'
+            'These indicators help identify early metabolic imbalance before clinical diagnosis.'
           )}
         </p>
+
       </div>
 
       {/* Symptom List */}
-      <div className="space-y-3 sm:space-y-4">
+      <div className="space-y-4">
 
         {ayurvedicSymptoms.map((s) => {
           const isYes = data[s.key] === true;
           const isNo = data[s.key] === false;
 
-          let cardStyle =
-            'bg-white border-slate-200 hover:border-slate-300';
+          const Icon = s.icon;
 
+          let cardStyle = 'bg-white border-slate-200';
           let textStyle = 'text-slate-700';
-
           let sanskritStyle = 'text-slate-400';
-
-          let iconBg = 'bg-slate-50 border-slate-100';
+          let iconStyle = 'bg-slate-50 border-slate-200 text-slate-500';
 
           if (isYes) {
-            cardStyle =
-              'bg-rose-50/50 border-rose-200 shadow-sm';
-
+            cardStyle = 'bg-rose-50 border-rose-200';
             textStyle = 'text-rose-900';
-
             sanskritStyle = 'text-rose-600/70';
-
-            iconBg = 'bg-rose-100 border-rose-200';
-
+            iconStyle = 'bg-rose-100 border-rose-200 text-rose-600';
           } else if (isNo) {
-            cardStyle =
-              'bg-emerald-50/50 border-emerald-200 shadow-sm';
-
+            cardStyle = 'bg-emerald-50 border-emerald-200';
             textStyle = 'text-emerald-900';
-
             sanskritStyle = 'text-emerald-600/70';
-
-            iconBg = 'bg-emerald-100 border-emerald-200';
+            iconStyle = 'bg-emerald-100 border-emerald-200 text-emerald-600';
           }
 
           return (
             <div
               key={s.key}
-              className={`p-3 sm:p-4 rounded-[1.25rem] border transition-all duration-300 flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${cardStyle}`}
+              className={`p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all ${cardStyle}`}
             >
 
-              {/* Left Side */}
-              <div className="flex items-center gap-3 md:gap-4 w-full">
+              {/* Left */}
+              <div className="flex items-start gap-4">
 
-                <div
-                  className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl border transition-colors duration-300 shrink-0 ${iconBg}`}
-                >
-                  {s.icon}
+                <div className={`w-11 h-11 rounded-xl flex items-center justify-center border ${iconStyle}`}>
+                  <Icon className="w-5 h-5" />
                 </div>
 
-                <div className="flex-1">
-
-                  <p
-                    className={`font-bold text-sm sm:text-base transition-colors duration-300 leading-tight ${textStyle}`}
-                  >
+                <div>
+                  <p className={`font-semibold text-sm ${textStyle}`}>
                     {s.label}
                   </p>
 
-                  <p
-                    className={`text-xs italic font-medium mt-1 transition-colors duration-300 ${sanskritStyle}`}
-                  >
+                  <p className={`text-xs italic mt-1 ${sanskritStyle}`}>
                     {s.sanskrit}
                   </p>
-
                 </div>
               </div>
 
               {/* Buttons */}
-              <div className="flex gap-2 w-full sm:w-auto shrink-0 bg-slate-100/50 p-1 rounded-[1.25rem] border border-slate-100">
+              <div className="flex gap-2 bg-slate-100 p-1 rounded-xl">
 
-                {/* YES */}
                 <button
                   type="button"
                   onClick={() => onChange({ [s.key]: true })}
-                  className={`flex-1 sm:flex-none px-4 py-2.5 sm:px-5 sm:py-2.5 rounded-xl text-sm font-bold transition-all duration-200 active:scale-95 ${
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
                     isYes
-                      ? 'bg-rose-500 text-white shadow-md shadow-rose-200 border border-rose-600'
-                      : 'bg-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 border border-transparent'
+                      ? 'bg-rose-500 text-white'
+                      : 'text-slate-600 hover:bg-slate-200'
                   }`}
                 >
                   {t('yes')}
                 </button>
 
-                {/* NO */}
                 <button
                   type="button"
                   onClick={() => onChange({ [s.key]: false })}
-                  className={`flex-1 sm:flex-none px-4 py-2.5 sm:px-5 sm:py-2.5 rounded-xl text-sm font-bold transition-all duration-200 active:scale-95 ${
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
                     isNo
-                      ? 'bg-emerald-500 text-white shadow-md shadow-emerald-200 border border-emerald-600'
-                      : 'bg-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 border border-transparent'
+                      ? 'bg-emerald-500 text-white'
+                      : 'text-slate-600 hover:bg-slate-200'
                   }`}
                 >
                   {t('no')}
@@ -192,6 +175,7 @@ export default function Step5Ayurveda({ data, onChange }) {
             </div>
           );
         })}
+
       </div>
     </div>
   );

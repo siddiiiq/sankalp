@@ -55,7 +55,7 @@ export default function Step2Vitals({ data, onChange }) {
 
       {/* Info Banner */}
       <div className="bg-blue-50 border border-blue-100 rounded-[1.25rem] p-4 flex items-start gap-3 shadow-sm">
-        <div className="text-blue-500 text-lg mt-0.5">📌</div>
+        <div className="text-blue-500 text-lg mt-0.5"></div>
 
         <p className="text-sm text-blue-800 font-medium leading-relaxed">
           {t('glucose_notice')}

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import LanguageToggle from '../shared/LanguageToggle';
@@ -8,6 +8,14 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const { t } = useTranslation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+
+  // Hide language toggle on doctor/hospital pages OR for doctor/hospital users
+  const hideLanguage =
+    location.pathname.includes('/doctor') ||
+    location.pathname.includes('/hospital') ||
+    user?.role === 'doctor' ||
+    user?.role === 'hospital';
 
   return (
     <nav
@@ -22,7 +30,7 @@ export default function Navbar() {
       }}
     >
       <div className="max-w-screen-xl mx-auto px-4 py-3 flex items-center justify-between">
-        
+
         {/* Logo Section */}
         <Link
           to="/"
@@ -56,7 +64,8 @@ export default function Navbar() {
 
         {/* Desktop Actions */}
         <div className="hidden sm:flex items-center gap-4">
-          <LanguageToggle />
+
+          {!hideLanguage && <LanguageToggle />}
 
           {user?.name && (
             <span
@@ -81,21 +90,6 @@ export default function Navbar() {
               border: '1px solid rgba(254, 202, 202, 0.5)',
               boxShadow: '0 2px 8px rgba(220, 38, 38, 0.1)'
             }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor =
-                'rgba(254, 226, 226, 1)')
-            }
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor =
-                'rgba(254, 226, 226, 0.8)';
-              e.currentTarget.style.transform = 'scale(1)';
-            }}
-            onMouseDown={(e) =>
-              (e.currentTarget.style.transform = 'scale(0.95)')
-            }
-            onMouseUp={(e) =>
-              (e.currentTarget.style.transform = 'scale(1)')
-            }
           >
             {t('logout', 'Logout')}
           </button>
@@ -106,15 +100,6 @@ export default function Navbar() {
           className="sm:hidden flex flex-col justify-center items-center w-10 h-10 rounded-full transition-transform duration-200 relative z-10"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           style={{ backgroundColor: 'rgba(243, 244, 246, 0.6)' }}
-          onMouseDown={(e) =>
-            (e.currentTarget.style.transform = 'scale(0.9)')
-          }
-          onMouseUp={(e) =>
-            (e.currentTarget.style.transform = 'scale(1)')
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.transform = 'scale(1)')
-          }
         >
           <svg
             width="24"
@@ -145,14 +130,12 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <>
-          {/* Overlay */}
           <div
             className="sm:hidden fixed inset-0 w-full h-screen bg-slate-900/20 backdrop-blur-sm"
             style={{ zIndex: -1 }}
             onClick={() => setIsMobileMenuOpen(false)}
           />
 
-          {/* Menu Panel */}
           <div
             className="sm:hidden absolute top-full left-0 w-full px-4 py-5 flex flex-col gap-4 rounded-b-[2rem]"
             style={{
@@ -167,7 +150,6 @@ export default function Navbar() {
                 <span className="text-xs text-slate-400 font-extrabold uppercase tracking-wider">
                   {t('account', 'Account')}
                 </span>
-
                 <span className="text-lg font-bold text-slate-800">
                   {user.name}
                 </span>
@@ -176,13 +158,14 @@ export default function Navbar() {
 
             <div className="h-px w-full bg-slate-100" />
 
-            <div className="flex justify-between items-center px-2">
-              <span className="text-sm font-bold text-slate-700">
-                {t('language', 'Language')}
-              </span>
-
-              <LanguageToggle />
-            </div>
+            {!hideLanguage && (
+              <div className="flex justify-between items-center px-2">
+                <span className="text-sm font-bold text-slate-700">
+                  {t('language', 'Language')}
+                </span>
+                <LanguageToggle />
+              </div>
+            )}
 
             <button
               onClick={() => {
@@ -195,15 +178,6 @@ export default function Navbar() {
                 backgroundColor: '#fef2f2',
                 border: '1px solid #fecaca'
               }}
-              onMouseDown={(e) =>
-                (e.currentTarget.style.transform = 'scale(0.97)')
-              }
-              onMouseUp={(e) =>
-                (e.currentTarget.style.transform = 'scale(1)')
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.transform = 'scale(1)')
-              }
             >
               {t('logout', 'Logout')}
             </button>
